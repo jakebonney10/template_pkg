@@ -34,15 +34,15 @@ All public repositories for this organization must comply with the following che
 - **Adherence to our [Style Guide](style_guide):** This is especially recommended if you are starting a new project.  If you are migrating an old one, it can be overlooked.
 - **Use of GitFlow:** Follow our [guidelines on version control](version_control) for more info
 
-## Sugested
+## Suggested
 - Issues template
-- Doxygen documentation for C++ code (a template can be foudn in this package)
+- Doxygen documentation for C++ code (a template can be found in this package)
 
 
 
 # README template  
 
-A few lines describing what your project is and what it does.   A picture of your software in action is highly recomended.
+A few lines describing what your project is and what it does.   A picture of your software in action is highly recommended.
 
 ## Installation
 
