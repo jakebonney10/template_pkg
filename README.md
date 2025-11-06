@@ -1,13 +1,13 @@
 # ROS2 Template C++ Package
 ![alt text](docs/media/template_package.png)
-This package is was designed as a starting point for building a ROS2 C++ package with:
+This package was designed as a starting point for building a ROS2 C++ package with:
 - automatically configuring cmake file
 - pre-defined structures and conventions for namespacing and code structures
 - adherence to ROS2 design conventions
 - pre-included doxygen configuration with easy to use and stylish output
 - pre-defined github actions to build the documentation and deploy it to github.io
 
-It is highly recomended that you complete the following checklist before you make public a repository derived from this package.
+It is highly recommended that you complete the following checklist before you make public a repository derived from this package.
 
 # Public Repository Checklist   
 
@@ -34,19 +34,19 @@ All public repositories for this organization must comply with the following che
 - **Adherence to our [Style Guide](style_guide):** This is especially recommended if you are starting a new project.  If you are migrating an old one, it can be overlooked.
 - **Use of GitFlow:** Follow our [guidelines on version control](version_control) for more info
 
-## Sugested
+## Suggested
 - Issues template
-- Doxygen documentation for C++ code (a template can be foudn in this package)
+- Doxygen documentation for C++ code (a template can be found in this package)
 
 
 
 # README template  
 
-A few lines describing what your project is and what it does.   A picture of your software in action is highly recomended.
+A few lines describing what your project is and what it does.   A picture of your software in action is highly recommended.
 
 ## Installation
 
-how to install the package whitout compilation.
+how to install the package without compilation.
 
 ## Compiling
 

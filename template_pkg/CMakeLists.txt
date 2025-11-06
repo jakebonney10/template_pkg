@@ -27,7 +27,8 @@ project(${PACKAGE_NAME})  ## this package name is the name of the directory this
 
 add_compile_definitions(CMAKE_PACKAGE_NAME=${PACKAGE_NAME})
 
-# Default to C++17 for humble
+# Default to C++17 for ROS2 Humble and Iron
+# Use C++20 for ROS2 Jazzy and newer distributions
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif()
@@ -70,7 +71,7 @@ include_directories(
 
 set(EXECUTABLES "")  # for installing later
 
-message("buliding ${PROJECT_NAME} node: ")
+message("building ${PROJECT_NAME} node: ")
 
 foreach(NODE_FILE ${NODES})
   get_filename_component(NODE_NAME ${NODE_FILE} NAME_WE)

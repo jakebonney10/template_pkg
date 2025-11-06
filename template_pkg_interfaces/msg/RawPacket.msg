@@ -1,3 +1,3 @@
 string frame_id
 
-char[] data
+uint8[] data
