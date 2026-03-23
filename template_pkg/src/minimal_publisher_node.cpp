@@ -32,6 +32,21 @@ void MinimalPublisherNode::Publishers::init(MinimalPublisherNode* node)
     publisher_ = node->create_publisher<std_msgs::msg::String>(node->parameters_.topics.publisher_topic, 10);
 }
 
+void MinimalPublisherNode::Diagnostics::init(MinimalPublisherNode* node)
+{
+    updater = std::make_shared<diagnostic_updater::Updater>(node);
+    updater->setHardwareID("none");
+    updater->add("Node Status", node, &MinimalPublisherNode::checkNodeStatus);
+
+    double freq = 1000.0 / node->parameters_.timer_period;
+    min_freq = freq * 0.5;
+    max_freq = freq * 2.0;
+
+    topic_diag = std::make_shared<diagnostic_updater::HeaderlessTopicDiagnostic>(
+        node->parameters_.topics.publisher_topic, *updater,
+        diagnostic_updater::FrequencyStatusParam(&min_freq, &max_freq, 0.1, 5));
+}
+
 MinimalPublisherNode::MinimalPublisherNode()
     : Node("minimal_publisher"), count_(0)
 {
@@ -39,6 +54,7 @@ MinimalPublisherNode::MinimalPublisherNode()
     parameters_.update(this);
     subscribers_.init(this);
     publishers_.init(this);
+    diagnostics_.init(this);
 
     message_ = "Hello, world! ";
 
@@ -52,6 +68,7 @@ void MinimalPublisherNode::timer_callback()
     message.data = message_ + std::to_string(count_++);
     RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
     publishers_.publisher_->publish(message);
+    diagnostics_.topic_diag->tick();
 }
 
 void MinimalPublisherNode::subscriptionCallback(std_msgs::msg::String::SharedPtr msg)
@@ -59,6 +76,17 @@ void MinimalPublisherNode::subscriptionCallback(std_msgs::msg::String::SharedPtr
     RCLCPP_INFO(this->get_logger(), "Received message: '%s'", msg->data.c_str());
     message_ = msg->data;
     // Try running `ros2 topic pub --once /input_topic std_msgs/msg/String "{data: 'Hello from command line'}"` from the command line
+}
+
+void MinimalPublisherNode::checkNodeStatus(diagnostic_updater::DiagnosticStatusWrapper& stat)
+{
+    if (count_ > 0) {
+        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::OK, "Node is publishing");
+    } else {
+        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::WARN, "No messages published yet");
+    }
+    stat.add("Messages published", count_);
+    stat.add("Current message", message_);
 }
 
 MinimalPublisherNode::~MinimalPublisherNode() 

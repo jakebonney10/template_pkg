@@ -12,6 +12,8 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <diagnostic_updater/diagnostic_updater.hpp>
+#include <diagnostic_updater/publisher.hpp>
 
 
 
@@ -75,6 +77,21 @@ public:
         void init(MinimalPublisherNode* node);
     };
 
+    /**
+     * @brief Structure for holding diagnostics components for the MinimalPublisherNode class.
+     *
+     * Uses diagnostic_updater to periodically publish diagnostic status and
+     * monitor the publication frequency of the output topic.
+     */
+    struct Diagnostics
+    {
+        std::shared_ptr<diagnostic_updater::Updater> updater; ///< Shared pointer to the diagnostic updater
+        std::shared_ptr<diagnostic_updater::HeaderlessTopicDiagnostic> topic_diag; ///< Topic frequency diagnostic
+        double min_freq; ///< Minimum expected publish frequency (Hz)
+        double max_freq; ///< Maximum expected publish frequency (Hz)
+        void init(MinimalPublisherNode* node);
+    };
+
 protected:
     /**
      * @brief Callback function for the timer
@@ -93,9 +110,20 @@ protected:
      */
     void subscriptionCallback(std_msgs::msg::String::SharedPtr msg);
 
+    /**
+     * @brief Diagnostic callback for reporting node status.
+     *
+     * This function is registered with the diagnostic updater and called
+     * periodically to report the health and state of the node.
+     *
+     * @param stat Wrapper for building the diagnostic status message.
+     */
+    void checkNodeStatus(diagnostic_updater::DiagnosticStatusWrapper& stat);
+
     Parameters parameters_;
     Subscribers subscribers_;
     Publishers publishers_;
+    Diagnostics diagnostics_;
 
     std::string message_;
     rclcpp::TimerBase::SharedPtr timer_; ///< Shared pointer to the timer

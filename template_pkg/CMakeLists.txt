@@ -8,6 +8,7 @@ set(ROS_DEPENDS
     ament_cmake
     rclcpp
     std_msgs
+    diagnostic_updater
     template_pkg_interfaces
   )
 
