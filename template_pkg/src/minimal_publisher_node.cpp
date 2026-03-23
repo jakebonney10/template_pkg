@@ -37,14 +37,6 @@ void MinimalPublisherNode::Diagnostics::init(MinimalPublisherNode* node)
     updater = std::make_shared<diagnostic_updater::Updater>(node);
     updater->setHardwareID("none");
     updater->add("Node Status", node, &MinimalPublisherNode::checkNodeStatus);
-
-    double freq = 1000.0 / node->parameters_.timer_period;
-    min_freq = freq * 0.5;
-    max_freq = freq * 2.0;
-
-    topic_diag = std::make_shared<diagnostic_updater::HeaderlessTopicDiagnostic>(
-        node->parameters_.topics.publisher_topic, *updater,
-        diagnostic_updater::FrequencyStatusParam(&min_freq, &max_freq, 0.1, 5));
 }
 
 MinimalPublisherNode::MinimalPublisherNode()
@@ -68,7 +60,6 @@ void MinimalPublisherNode::timer_callback()
     message.data = message_ + std::to_string(count_++);
     RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
     publishers_.publisher_->publish(message);
-    diagnostics_.topic_diag->tick();
 }
 
 void MinimalPublisherNode::subscriptionCallback(std_msgs::msg::String::SharedPtr msg)
@@ -80,13 +71,23 @@ void MinimalPublisherNode::subscriptionCallback(std_msgs::msg::String::SharedPtr
 
 void MinimalPublisherNode::checkNodeStatus(diagnostic_updater::DiagnosticStatusWrapper& stat)
 {
-    if (count_ > 0) {
-        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::OK, "Node is publishing");
-    } else {
-        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::WARN, "No messages published yet");
-    }
+    // Add key-value pairs to give context in the diagnostics viewer
     stat.add("Messages published", count_);
-    stat.add("Current message", message_);
+
+    // Use STALE when the diagnostic source has not produced data yet or has gone silent.
+    // Use ERROR for critical failures where the node cannot function correctly.
+    // Use WARN for degraded-but-recoverable conditions.
+    // Use OK for normal operation.
+    // Tip: set error/warn flags from other callbacks and check them here.
+    if (count_ == 0) {
+        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::STALE, "No messages published yet");
+    } else if (false /* replace: e.g. error_flag_ set from a failed operation */) {
+        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::ERROR, "Describe the critical failure here");
+    } else if (false /* replace: e.g. warn_flag_ set from degraded conditions */) {
+        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::WARN, "Describe the degraded condition here");
+    } else {
+        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::OK, "Publishing normally");
+    }
 }
 
 MinimalPublisherNode::~MinimalPublisherNode() 

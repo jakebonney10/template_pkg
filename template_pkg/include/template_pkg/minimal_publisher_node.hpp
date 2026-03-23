@@ -1,6 +1,5 @@
 #pragma once  // Favor using this over the #ifndef, #define method
 
-
 // First include your local package stuff
 #include "package_defs.hpp"  //  This is where we include all our namespace stuff for the package
 
@@ -13,12 +12,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <diagnostic_updater/diagnostic_updater.hpp>
-#include <diagnostic_updater/publisher.hpp>
-
-
 
 NS_HEAD  // macro for consistantly defining our namespace for the package
-
 
 /**
  * @brief a minimal publisher class that extends the rclcpp::Node class to
@@ -86,9 +81,6 @@ public:
     struct Diagnostics
     {
         std::shared_ptr<diagnostic_updater::Updater> updater; ///< Shared pointer to the diagnostic updater
-        std::shared_ptr<diagnostic_updater::HeaderlessTopicDiagnostic> topic_diag; ///< Topic frequency diagnostic
-        double min_freq; ///< Minimum expected publish frequency (Hz)
-        double max_freq; ///< Maximum expected publish frequency (Hz)
         void init(MinimalPublisherNode* node);
     };
 
