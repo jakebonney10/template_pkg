@@ -1,6 +1,5 @@
 #pragma once  // Favor using this over the #ifndef, #define method
 
-
 // First include your local package stuff
 #include "package_defs.hpp"  //  This is where we include all our namespace stuff for the package
 
@@ -12,11 +11,9 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
-
-
+#include <diagnostic_updater/diagnostic_updater.hpp>
 
 NS_HEAD  // macro for consistantly defining our namespace for the package
-
 
 /**
  * @brief a minimal publisher class that extends the rclcpp::Node class to
@@ -75,6 +72,18 @@ public:
         void init(MinimalPublisherNode* node);
     };
 
+    /**
+     * @brief Structure for holding diagnostics components for the MinimalPublisherNode class.
+     *
+     * Uses diagnostic_updater to periodically publish diagnostic status and
+     * monitor the publication frequency of the output topic.
+     */
+    struct Diagnostics
+    {
+        std::shared_ptr<diagnostic_updater::Updater> updater; ///< Shared pointer to the diagnostic updater
+        void init(MinimalPublisherNode* node);
+    };
+
 protected:
     /**
      * @brief Callback function for the timer
@@ -93,9 +102,20 @@ protected:
      */
     void subscriptionCallback(std_msgs::msg::String::SharedPtr msg);
 
+    /**
+     * @brief Diagnostic callback for reporting node status.
+     *
+     * This function is registered with the diagnostic updater and called
+     * periodically to report the health and state of the node.
+     *
+     * @param stat Wrapper for building the diagnostic status message.
+     */
+    void checkNodeStatus(diagnostic_updater::DiagnosticStatusWrapper& stat);
+
     Parameters parameters_;
     Subscribers subscribers_;
     Publishers publishers_;
+    Diagnostics diagnostics_;
 
     std::string message_;
     rclcpp::TimerBase::SharedPtr timer_; ///< Shared pointer to the timer

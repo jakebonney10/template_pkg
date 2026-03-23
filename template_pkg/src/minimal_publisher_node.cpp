@@ -32,6 +32,13 @@ void MinimalPublisherNode::Publishers::init(MinimalPublisherNode* node)
     publisher_ = node->create_publisher<std_msgs::msg::String>(node->parameters_.topics.publisher_topic, 10);
 }
 
+void MinimalPublisherNode::Diagnostics::init(MinimalPublisherNode* node)
+{
+    updater = std::make_shared<diagnostic_updater::Updater>(node);
+    updater->setHardwareID("none");
+    updater->add("Node Status", node, &MinimalPublisherNode::checkNodeStatus);
+}
+
 MinimalPublisherNode::MinimalPublisherNode()
     : Node("minimal_publisher"), count_(0)
 {
@@ -39,6 +46,7 @@ MinimalPublisherNode::MinimalPublisherNode()
     parameters_.update(this);
     subscribers_.init(this);
     publishers_.init(this);
+    diagnostics_.init(this);
 
     message_ = "Hello, world! ";
 
@@ -59,6 +67,27 @@ void MinimalPublisherNode::subscriptionCallback(std_msgs::msg::String::SharedPtr
     RCLCPP_INFO(this->get_logger(), "Received message: '%s'", msg->data.c_str());
     message_ = msg->data;
     // Try running `ros2 topic pub --once /input_topic std_msgs/msg/String "{data: 'Hello from command line'}"` from the command line
+}
+
+void MinimalPublisherNode::checkNodeStatus(diagnostic_updater::DiagnosticStatusWrapper& stat)
+{
+    // Add key-value pairs to give context in the diagnostics viewer
+    stat.add("Messages published", count_);
+
+    // Use STALE when the diagnostic source has not produced data yet or has gone silent.
+    // Use ERROR for critical failures where the node cannot function correctly.
+    // Use WARN for degraded-but-recoverable conditions.
+    // Use OK for normal operation.
+    // Tip: set error/warn flags from other callbacks and check them here.
+    if (count_ == 0) {
+        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::STALE, "No messages published yet");
+    } else if (false /* replace: e.g. error_flag_ set from a failed operation */) {
+        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::ERROR, "Describe the critical failure here");
+    } else if (false /* replace: e.g. warn_flag_ set from degraded conditions */) {
+        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::WARN, "Describe the degraded condition here");
+    } else {
+        stat.summary(diagnostic_msgs::msg::DiagnosticStatus::OK, "Publishing normally");
+    }
 }
 
 MinimalPublisherNode::~MinimalPublisherNode() 
