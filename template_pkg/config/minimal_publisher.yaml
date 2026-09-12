@@ -1,3 +1,22 @@
 minimal_publisher:
     ros__parameters:
-        message:  "Message set through parameter! "
+        timer_period: 500
+        topics:
+            subscriber_topic: input_topic
+            publisher_topic: output_topic
+
+        # Configure publisher and subscriber QoS independently. Endpoints must
+        # use compatible policies to communicate. Best effort avoids retries
+        # and is useful for high-rate sensor/control data where fresh data is
+        # more important than receiving every sample.
+        qos:
+            subscriber:
+                reliability: best_effort  # best_effort, reliable, system_default
+                durability: volatile      # volatile, transient_local, system_default
+                history: keep_last        # keep_last, keep_all
+                depth: 10
+            publisher:
+                reliability: best_effort
+                durability: volatile
+                history: keep_last
+                depth: 10

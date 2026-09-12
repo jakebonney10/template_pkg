@@ -1,16 +1,76 @@
 #include "minimal_publisher_node.hpp"
 
+#include <stdexcept>
+
 using namespace std::chrono_literals;
 
 NS_HEAD
 
 MinimalPublisherNode::Parameters::Parameters(){} // default params are defined in header file
 
+void MinimalPublisherNode::Parameters::QosSettings::declare(
+    MinimalPublisherNode* node, const std::string& prefix)
+{
+    node->declare_parameter(prefix + ".reliability", reliability);
+    node->declare_parameter(prefix + ".durability", durability);
+    node->declare_parameter(prefix + ".history", history);
+    node->declare_parameter(prefix + ".depth", depth);
+}
+
+void MinimalPublisherNode::Parameters::QosSettings::update(
+    MinimalPublisherNode* node, const std::string& prefix)
+{
+    node->get_parameter(prefix + ".reliability", reliability);
+    node->get_parameter(prefix + ".durability", durability);
+    node->get_parameter(prefix + ".history", history);
+    node->get_parameter(prefix + ".depth", depth);
+}
+
+rclcpp::QoS MinimalPublisherNode::Parameters::QosSettings::makeQos() const
+{
+    if (depth <= 0) {
+        throw std::invalid_argument("QoS depth must be greater than zero");
+    }
+
+    rclcpp::QoS qos(static_cast<size_t>(depth));
+    if (history == "keep_last") {
+        qos.keep_last(static_cast<size_t>(depth));
+    } else if (history == "keep_all") {
+        qos.keep_all();
+    } else {
+        throw std::invalid_argument("Unsupported QoS history: " + history);
+    }
+
+    if (reliability == "best_effort") {
+        qos.best_effort();
+    } else if (reliability == "reliable") {
+        qos.reliable();
+    } else if (reliability == "system_default") {
+        qos.reliability(RMW_QOS_POLICY_RELIABILITY_SYSTEM_DEFAULT);
+    } else {
+        throw std::invalid_argument("Unsupported QoS reliability: " + reliability);
+    }
+
+    if (durability == "volatile") {
+        qos.durability_volatile();
+    } else if (durability == "transient_local") {
+        qos.transient_local();
+    } else if (durability == "system_default") {
+        qos.durability(RMW_QOS_POLICY_DURABILITY_SYSTEM_DEFAULT);
+    } else {
+        throw std::invalid_argument("Unsupported QoS durability: " + durability);
+    }
+
+    return qos;
+}
+
 void MinimalPublisherNode::Parameters::declare(MinimalPublisherNode* node)
 {
     node->declare_parameter("timer_period", timer_period);
     node->declare_parameter("topics.subscriber_topic", topics.subscriber_topic);
     node->declare_parameter("topics.publisher_topic", topics.publisher_topic);
+    subscriber_qos.declare(node, "qos.subscriber");
+    publisher_qos.declare(node, "qos.publisher");
 }
 
 void MinimalPublisherNode::Parameters::update(MinimalPublisherNode* node)
@@ -18,18 +78,21 @@ void MinimalPublisherNode::Parameters::update(MinimalPublisherNode* node)
     node->get_parameter("timer_period", timer_period);
     node->get_parameter("topics.subscriber_topic", topics.subscriber_topic);
     node->get_parameter("topics.publisher_topic", topics.publisher_topic);
+    subscriber_qos.update(node, "qos.subscriber");
+    publisher_qos.update(node, "qos.publisher");
 }
 
 void MinimalPublisherNode::Subscribers::init(MinimalPublisherNode* node)
 {
     subscription_ = node->create_subscription<std_msgs::msg::String>(
-        node->parameters_.topics.subscriber_topic, 10,
+        node->parameters_.topics.subscriber_topic, node->parameters_.subscriber_qos.makeQos(),
         std::bind(&MinimalPublisherNode::subscriptionCallback, node, std::placeholders::_1));
 }
 
 void MinimalPublisherNode::Publishers::init(MinimalPublisherNode* node)
 {
-    publisher_ = node->create_publisher<std_msgs::msg::String>(node->parameters_.topics.publisher_topic, 10);
+    publisher_ = node->create_publisher<std_msgs::msg::String>(
+        node->parameters_.topics.publisher_topic, node->parameters_.publisher_qos.makeQos());
 }
 
 void MinimalPublisherNode::Diagnostics::init(MinimalPublisherNode* node)
