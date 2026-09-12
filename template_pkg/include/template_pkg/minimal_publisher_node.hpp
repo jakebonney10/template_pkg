@@ -44,10 +44,34 @@ public:
     {
         int timer_period = 500; ///< Timer period in milliseconds
 
+        /**
+         * @brief User-friendly ROS QoS settings for a topic endpoint.
+         *
+         * The string values are intended to be set from a ROS parameter YAML
+         * file. Supported reliability values are `best_effort`, `reliable`,
+         * and `system_default`; durability supports `volatile`,
+         * `transient_local`, and `system_default`; history supports
+         * `keep_last` and `keep_all`.
+         */
+        struct QosSettings
+        {
+            std::string reliability = "best_effort";
+            std::string durability = "volatile";
+            std::string history = "keep_last";
+            int depth = 10;
+
+            void declare(MinimalPublisherNode* node, const std::string& prefix);
+            void update(MinimalPublisherNode* node, const std::string& prefix);
+            rclcpp::QoS makeQos() const;
+        };
+
         struct Topics{
             std::string subscriber_topic = "input_topic";  ///< Name of the input topic
             std::string publisher_topic = "output_topic";  ///< Name of the output topic
         } topics;
+
+        QosSettings subscriber_qos; ///< QoS used by the input subscription
+        QosSettings publisher_qos;  ///< QoS used by the output publisher
 
         Parameters();
         void declare(MinimalPublisherNode* node);

@@ -62,7 +62,45 @@ A basic hello world use of your package
 
 ## Parameters
 
-a description of the ros parameters for your package.  It would be good to update the config directory too with some example yaml.
+The example node reads its topic names, timer period, and publisher/subscriber
+QoS profiles from `template_pkg/config/minimal_publisher.yaml`. Publisher and
+subscriber QoS can be configured independently without recompiling:
+
+```yaml
+minimal_publisher:
+  ros__parameters:
+    qos:
+      subscriber:
+        reliability: best_effort
+        durability: volatile
+        history: keep_last
+        depth: 10
+      publisher:
+        reliability: best_effort
+        durability: volatile
+        history: keep_last
+        depth: 10
+```
+
+The supported values are:
+
+| Parameter | Values |
+| --- | --- |
+| `reliability` | `best_effort`, `reliable`, `system_default` |
+| `durability` | `volatile`, `transient_local`, `system_default` |
+| `history` | `keep_last`, `keep_all` |
+| `depth` | Any positive integer (used by `keep_last`) |
+
+`best_effort` is the default for this template and is often appropriate for
+high-rate data where the newest sample matters more than retransmitting an old
+one. Use `reliable` when every message must be delivered. A publisher and
+subscriber must have compatible QoS policies before ROS 2 will connect them.
+
+Launch the configured example with:
+
+```bash
+ros2 launch template_pkg minimal_publisher.launch.py
+```
 
 ## Services
 
