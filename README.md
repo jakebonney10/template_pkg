@@ -1,11 +1,67 @@
 # ROS2 Template C++ Package
+
+[![Humble](https://github.com/jakebonney10/template_pkg/actions/workflows/humble.yaml/badge.svg)](https://github.com/jakebonney10/template_pkg/actions/workflows/humble.yaml)
+[![Jazzy](https://github.com/jakebonney10/template_pkg/actions/workflows/jazzy.yaml/badge.svg)](https://github.com/jakebonney10/template_pkg/actions/workflows/jazzy.yaml)
+[![Lyrical](https://github.com/jakebonney10/template_pkg/actions/workflows/lyrical.yaml/badge.svg)](https://github.com/jakebonney10/template_pkg/actions/workflows/lyrical.yaml)
+[![Pages](https://github.com/jakebonney10/template_pkg/actions/workflows/pages.yml/badge.svg)](https://github.com/jakebonney10/template_pkg/actions/workflows/pages.yml)
+
 ![alt text](docs/media/template_package.png)
+
 This package was designed as a starting point for building a ROS2 C++ package with:
 - automatically configuring cmake file
 - pre-defined structures and conventions for namespacing and code structures
 - adherence to ROS2 design conventions
 - pre-included doxygen configuration with easy to use and stylish output
+- an example node with YAML-configurable topics and QoS, plus `diagnostic_updater` support
+- a separate interfaces package (`template_pkg_interfaces`) for custom messages
+- pre-defined github actions that build and test the packages on every supported ROS2 distribution
 - pre-defined github actions to build the documentation and deploy it to github.io
+
+## Supported ROS2 distributions
+
+| Distribution | Ubuntu | Build status |
+| --- | --- | --- |
+| Humble Hawksbill | 22.04 | [![Humble](https://github.com/jakebonney10/template_pkg/actions/workflows/humble.yaml/badge.svg)](https://github.com/jakebonney10/template_pkg/actions/workflows/humble.yaml) |
+| Jazzy Jalisco | 24.04 | [![Jazzy](https://github.com/jakebonney10/template_pkg/actions/workflows/jazzy.yaml/badge.svg)](https://github.com/jakebonney10/template_pkg/actions/workflows/jazzy.yaml) |
+| Lyrical Luth | 26.04 | [![Lyrical](https://github.com/jakebonney10/template_pkg/actions/workflows/lyrical.yaml/badge.svg)](https://github.com/jakebonney10/template_pkg/actions/workflows/lyrical.yaml) |
+
+## Repository layout
+
+| Path | Purpose |
+| --- | --- |
+| `template_pkg/` | The C++ package: node sources, headers, launch and config files |
+| `template_pkg_interfaces/` | Message definitions used by `template_pkg` |
+| `docs/` | Doxygen configuration, theme, and extra documentation pages |
+| `.github/workflows/` | Build checks (one per ROS2 distribution) and documentation deployment |
+
+## GitHub Actions
+
+| Workflow | Runs on | What it does |
+| --- | --- | --- |
+| `humble.yaml`, `jazzy.yaml`, `lyrical.yaml` | pushes to `master`/`main`/`devel`, every pull request, manual dispatch | Uses [industrial_ci](https://github.com/ros-industrial/industrial_ci) to install dependencies with `rosdep`, build every package in the repository, and run its tests in a clean container for that distribution |
+| `pages.yml` | pushes to `master`/`main`, manual dispatch | Builds the Doxygen documentation, stamps it with the latest release tag, and deploys it to GitHub Pages |
+| `release.yaml` | pushing a `vX.Y.Z` tag | Checks that the tag matches the `<version>` in every `package.xml`, then creates a GitHub Release with generated release notes |
+
+### Making a release
+
+1. Set the same new `<version>` in `template_pkg/package.xml` and `template_pkg_interfaces/package.xml`, and merge that to `master`.
+2. Tag that commit and push the tag:
+
+```bash
+git tag v1.2.3
+git push origin v1.2.3
+```
+
+The release workflow fails without publishing anything if the tag and the package versions disagree.
+
+The template ships without tests, so the build checks only verify that the packages compile. Any test you register in a package's `CMakeLists.txt` (see the commented `ament_cmake_gtest` example in `template_pkg/CMakeLists.txt`) is picked up and run automatically. The `ament_lint_common` linters are intentionally not enabled because the template's code style differs from the ament defaults.
+
+When you derive a repository from this template:
+
+1. Replace `jakebonney10/template_pkg` in the badge URLs at the top of this file with your own `owner/repository`.
+2. To support another distribution, copy one of the distribution workflows and change its `name` and `ROS_DISTRO`. To drop one, delete its workflow file and badge.
+3. Enable GitHub Pages for the repository (**Settings → Pages → Source: GitHub Actions**) so `pages.yml` can deploy.
+4. Optionally require the build checks before merging (**Settings → Branches → Branch protection rules**).
 
 It is highly recommended that you complete the following checklist before you make public a repository derived from this package.
 
@@ -52,8 +108,17 @@ how to install the package without compilation.
 
 how to compile the package including dependencies and nicely formatted commands.  This section should be geared toward developers and collaborators.
 
-```
-sudo make install
+For this template, clone the repository into the `src` directory of a colcon workspace, install the dependencies with `rosdep`, and build:
+
+```bash
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+git clone https://github.com/jakebonney10/template_pkg.git
+cd ~/ros2_ws
+source /opt/ros/$ROS_DISTRO/setup.bash
+rosdep install --from-paths src --ignore-src -y
+colcon build
+source install/setup.bash
 ```
 
 ## Running the package

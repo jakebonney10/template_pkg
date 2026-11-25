@@ -1,0 +1,23 @@
+name: Jazzy
+
+on:
+  push:
+    branches: [master, main, devel]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  industrial_ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Builds every package in the repository and runs its tests in a
+      # clean ROS Jazzy container: https://github.com/ros-industrial/industrial_ci
+      - uses: ros-industrial/industrial_ci@master
+        env:
+          ROS_DISTRO: jazzy
+          ROS_REPO: main

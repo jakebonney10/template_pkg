@@ -21,8 +21,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-#      - name: set version
-#        run: echo "PROJECT_NUMBER = `git describe --tags`" >> Doxyfile
+      # Stamp the docs with the latest release tag (e.g. v1.2.3, or
+      # v1.2.3-4-gabc1234 when master is ahead of it).  Falls back to the
+      # version in package.xml while the repository has no tags.
+      - name: Set documentation version
+        run: |
+          version="$(git describe --tags 2>/dev/null || sed -n 's:.*<version>\(.*\)</version>.*:\1:p' template_pkg/package.xml | head -n 1)"
+          echo "Documentation version: $version"
+          echo "PROJECT_NUMBER = \"$version\"" >> docs/Doxyfile
       - name: Generate Documentation
         uses: mattnotmitt/doxygen-action@edge
         with:

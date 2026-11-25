@@ -1,0 +1,37 @@
+name: Release
+
+# Pushing a semantic version tag (e.g. v1.2.3) creates a GitHub Release.
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The tag must match the <version> of every package.xml in the repository.
+      - name: Check tag against package versions
+        run: |
+          tag_version="${GITHUB_REF_NAME#v}"
+          status=0
+          while IFS= read -r manifest; do
+            pkg_version="$(sed -n 's:.*<version>\(.*\)</version>.*:\1:p' "$manifest" | head -n 1)"
+            if [ "$pkg_version" = "$tag_version" ]; then
+              echo "ok: $manifest is at $pkg_version"
+            else
+              echo "::error file=$manifest::version is '$pkg_version' but the tag is '$GITHUB_REF_NAME'"
+              status=1
+            fi
+          done < <(git ls-files '*package.xml')
+          exit $status
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes --title "$GITHUB_REF_NAME"

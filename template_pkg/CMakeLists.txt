@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16)
 
 ################################
 ##  CONFIGURE THIS FILE HERE  ##
@@ -22,7 +22,7 @@ set(EXTERNAL_DEPENDS_LIB
 
 
 get_filename_component(PACKAGE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-message("Creating Package: ${PACKAGE_NAME}")
+message(STATUS "Creating Package: ${PACKAGE_NAME}")
 project(${PACKAGE_NAME})  ## this package name is the name of the directory this cmake file is in
 
 
@@ -70,21 +70,34 @@ include_directories(
 ## Build ##
 ###########
 
+# Collect the imported targets of every ROS dependency.  This replaces
+# ament_target_dependencies(), which was removed in ROS2 Lyrical, and works
+# on Humble and newer.  Message packages export <pkg>_TARGETS, most other
+# packages export a <pkg>::<pkg> target.
+set(ROS_DEPENDS_LIB "")
+foreach(DEPEND ${ROS_DEPENDS})
+  if(DEFINED ${DEPEND}_TARGETS)
+    list(APPEND ROS_DEPENDS_LIB ${${DEPEND}_TARGETS})
+  elseif(TARGET ${DEPEND}::${DEPEND})
+    list(APPEND ROS_DEPENDS_LIB ${DEPEND}::${DEPEND})
+  endif()
+endforeach(DEPEND)
+
 set(EXECUTABLES "")  # for installing later
 
-message("building ${PROJECT_NAME} node: ")
+message(STATUS "building ${PROJECT_NAME} node: ")
 
 foreach(NODE_FILE ${NODES})
   get_filename_component(NODE_NAME ${NODE_FILE} NAME_WE)
-  message("  - " ${NODE_NAME})
+  message(STATUS "  - ${NODE_NAME}")
   list(APPEND EXECUTABLES ${NODE_NAME})
   add_executable(${NODE_NAME} ${NODE_FILE} ${HDRS} ${SRCS})
-  ament_target_dependencies(${NODE_NAME} ${ROS_DEPENDS} ${EXTERNAL_DEPENDS_LIB})
+  target_link_libraries(${NODE_NAME} ${ROS_DEPENDS_LIB} ${EXTERNAL_DEPENDS_LIB})
   target_include_directories(${NODE_NAME} PRIVATE "include/${PROJECT_NAME}/")
 endforeach(NODE_FILE)
 
 
-message("  Installing: " ${EXECUTABLES})
+message(STATUS "  Installing: ${EXECUTABLES}")
 install(TARGETS
   ${EXECUTABLES}
   DESTINATION lib/${PROJECT_NAME}/
@@ -102,9 +115,14 @@ install(DIRECTORY
 ## testing ##
 #############
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
+# Tests added here are run by `colcon test` and by the GitHub Actions build
+# checks.  Example:
+#
+#   if(BUILD_TESTING)
+#     find_package(ament_cmake_gtest REQUIRED)
+#     ament_add_gtest(${PROJECT_NAME}_test test/my_test.cpp)
+#   endif()
+#
+# and add <test_depend>ament_cmake_gtest</test_depend> to package.xml.
 
 ament_package()
