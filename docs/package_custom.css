@@ -56,25 +56,3 @@ html.dark-mode {
   --searchbar-background: var(--page-background-color);
   */
 }
-
-/*
- Inline code.  Doxygen 1.9.8 and newer writes inline code as
- <span class="tt"> instead of <code>, which the bundled doxygen-awesome
- theme does not style.  Give it the same look as the theme's <code>.
- */
-span.tt {
-  display: inline;
-  white-space: normal;
-  font-family: var(--font-family-monospace);
-  font-size: var(--code-font-size);
-  background: var(--code-background);
-  color: var(--code-foreground);
-  border: 1px solid var(--separator-color);
-  border-radius: var(--border-radius-small);
-  padding: 2px 6px;
-}
-
-span.tt a {
-  font-family: var(--font-family-monospace);
-  font-size: var(--code-font-size);
-}
