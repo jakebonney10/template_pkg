@@ -49,7 +49,7 @@ void MinimalPublisherNode::Parameters::QosSettings::update(
   node->get_parameter(prefix + ".depth", depth);
 }
 
-rclcpp::QoS MinimalPublisherNode::Parameters::QosSettings::makeQos() const
+rclcpp::QoS MinimalPublisherNode::Parameters::QosSettings::make_qos() const
 {
   if (depth <= 0) {
     throw std::invalid_argument("QoS depth must be greater than zero");
@@ -108,21 +108,21 @@ void MinimalPublisherNode::Parameters::update(MinimalPublisherNode * node)
 void MinimalPublisherNode::Subscribers::init(MinimalPublisherNode * node)
 {
   subscription_ = node->create_subscription<std_msgs::msg::String>(
-    node->parameters_.topics.subscriber_topic, node->parameters_.subscriber_qos.makeQos(),
-    std::bind(&MinimalPublisherNode::subscriptionCallback, node, std::placeholders::_1));
+    node->parameters_.topics.subscriber_topic, node->parameters_.subscriber_qos.make_qos(),
+    std::bind(&MinimalPublisherNode::subscription_callback, node, std::placeholders::_1));
 }
 
 void MinimalPublisherNode::Publishers::init(MinimalPublisherNode * node)
 {
   publisher_ = node->create_publisher<std_msgs::msg::String>(
-    node->parameters_.topics.publisher_topic, node->parameters_.publisher_qos.makeQos());
+    node->parameters_.topics.publisher_topic, node->parameters_.publisher_qos.make_qos());
 }
 
 void MinimalPublisherNode::Diagnostics::init(MinimalPublisherNode * node)
 {
   updater = std::make_shared<diagnostic_updater::Updater>(node);
   updater->setHardwareID("none");
-  updater->add("Node Status", node, &MinimalPublisherNode::checkNodeStatus);
+  updater->add("Node Status", node, &MinimalPublisherNode::check_node_status);
 }
 
 MinimalPublisherNode::MinimalPublisherNode()
@@ -149,7 +149,7 @@ void MinimalPublisherNode::timer_callback()
   publishers_.publisher_->publish(message);
 }
 
-void MinimalPublisherNode::subscriptionCallback(std_msgs::msg::String::SharedPtr msg)
+void MinimalPublisherNode::subscription_callback(std_msgs::msg::String::SharedPtr msg)
 {
   RCLCPP_INFO(this->get_logger(), "Received message: '%s'", msg->data.c_str());
   message_ = msg->data;
@@ -157,7 +157,7 @@ void MinimalPublisherNode::subscriptionCallback(std_msgs::msg::String::SharedPtr
   //   ros2 topic pub --once /input_topic std_msgs/msg/String "{data: 'Hello'}"
 }
 
-void MinimalPublisherNode::checkNodeStatus(diagnostic_updater::DiagnosticStatusWrapper & stat)
+void MinimalPublisherNode::check_node_status(diagnostic_updater::DiagnosticStatusWrapper & stat)
 {
   // Add key-value pairs to give context in the diagnostics viewer
   stat.add("Messages published", count_);

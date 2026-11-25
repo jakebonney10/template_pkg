@@ -19,8 +19,7 @@
 // THE SOFTWARE.
 
 
-#ifndef TEMPLATE_PKG__PACKAGE_DEFS_HPP_
-#define TEMPLATE_PKG__PACKAGE_DEFS_HPP_
+#pragma once
 
 ///
 ///  Namespace stuff
@@ -34,5 +33,3 @@
 #define NS_HEAD namespace template_pkg {
 #define NS_FOOT }
 /* *INDENT-ON* */
-
-#endif  // TEMPLATE_PKG__PACKAGE_DEFS_HPP_

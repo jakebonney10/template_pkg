@@ -45,8 +45,9 @@ This package was designed as a starting point for building a ROS2 C++ package wi
 
 ### Making a release
 
-1. Set the same new `<version>` in `template_pkg/package.xml` and `template_pkg_interfaces/package.xml`, and merge that to `master`.
-2. Tag that commit and push the tag:
+1. In each package's `CHANGELOG.rst`, rename the `Forthcoming` section to the new version and date.
+2. Set the same new `<version>` in `template_pkg/package.xml` and `template_pkg_interfaces/package.xml`, and merge that to `master`.
+3. Tag that commit and push the tag:
 
 ```bash
 git tag v1.2.3
@@ -55,7 +56,7 @@ git push origin v1.2.3
 
 The release workflow fails without publishing anything if the tag and the package versions disagree.
 
-Both packages enable the standard ROS2 linters (`ament_lint_common`), so the build checks fail if the code does not follow the [ROS2 code style](https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Code-Style-Language-Versions.html). Any test you register in a package's `CMakeLists.txt` (see the commented `ament_cmake_gtest` example in `template_pkg/CMakeLists.txt`) is run as well.
+Both packages enable the standard ROS2 linters (`ament_lint_common`), so the build checks fail if the code does not follow the [ROS2 code style](https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Contributing-to-code/Code-Style-Language-Versions.html). Any test you register in a package's `CMakeLists.txt` (see the commented `ament_cmake_gtest` example in `template_pkg/CMakeLists.txt`) is run as well.
 
 ### Checking your code locally
 
@@ -81,13 +82,15 @@ When you derive a repository from this template:
 3. Enable GitHub Pages for the repository (**Settings → Pages → Source: GitHub Actions**) so `pages.yml` can deploy.
 4. Optionally require the build checks before merging (**Settings → Branches → Branch protection rules**).
 
+The template is the working example for the [BonROV Development Conventions](https://bonrov.github.io/development-conventions/), which describe the style, version control and publication rules it follows.
+
 It is highly recommended that you complete the following checklist before you make public a repository derived from this package.
 
 # Public Repository Checklist   
 
 ## Requirements
 
-All public repositories for this organization must comply with the following checklist.  If they do not, an administrator will make your repository private until it complies. 
+All public repositories for this organization must comply with the following checklist, which comes from the [BonROV Development Conventions](https://bonrov.github.io/development-conventions/repository_publication_guidelines.html).  If they do not, an administrator will make your repository private until it complies. 
 
 - **README.md file:** Every package must have a README.md file in the root of the repository.  The readme must describe, at least, the following:
   - The name of the package
@@ -105,8 +108,8 @@ All public repositories for this organization must comply with the following che
 
 ## Highly Encouraged
 
-- **Adherence to our [Style Guide](style_guide):** This is especially recommended if you are starting a new project.  If you are migrating an old one, it can be overlooked.
-- **Use of GitFlow:** Follow our [guidelines on version control](version_control) for more info
+- **Adherence to our [Style Guide](https://bonrov.github.io/development-conventions/style_guide.html):** This is especially recommended if you are starting a new project.  If you are migrating an old one, it can be overlooked.
+- **Use of GitFlow:** Follow our [guidelines on version control](https://bonrov.github.io/development-conventions/version_control.html) for more info
 
 ## Suggested
 - Issues template

@@ -19,8 +19,7 @@
 // THE SOFTWARE.
 
 
-#ifndef TEMPLATE_PKG__SECTIONS__SECTIONS_DEFS_HPP_
-#define TEMPLATE_PKG__SECTIONS__SECTIONS_DEFS_HPP_
+#pragma once
 
 #include "template_pkg/package_defs.hpp"
 
@@ -35,5 +34,3 @@
 #define SECTIONS_NS_HEAD NS_HEAD namespace sections {
 #define SECTIONS_NS_FOOT NS_FOOT }
 /* *INDENT-ON* */
-
-#endif  // TEMPLATE_PKG__SECTIONS__SECTIONS_DEFS_HPP_

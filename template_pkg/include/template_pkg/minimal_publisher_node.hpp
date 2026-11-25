@@ -19,8 +19,7 @@
 // THE SOFTWARE.
 
 
-#ifndef TEMPLATE_PKG__MINIMAL_PUBLISHER_NODE_HPP_
-#define TEMPLATE_PKG__MINIMAL_PUBLISHER_NODE_HPP_
+#pragma once
 
 // Include order: C++ standard library first, then other packages.
 #include <chrono>
@@ -84,7 +83,7 @@ public:
 
       void declare(MinimalPublisherNode * node, const std::string & prefix);
       void update(MinimalPublisherNode * node, const std::string & prefix);
-      rclcpp::QoS makeQos() const;
+      rclcpp::QoS make_qos() const;
     };
 
     struct Topics
@@ -150,7 +149,7 @@ protected:
    *
    * @param msg Shared pointer to the received message.
    */
-  void subscriptionCallback(std_msgs::msg::String::SharedPtr msg);
+  void subscription_callback(std_msgs::msg::String::SharedPtr msg);
 
   /**
    * @brief Diagnostic callback for reporting node status.
@@ -160,7 +159,7 @@ protected:
    *
    * @param stat Wrapper for building the diagnostic status message.
    */
-  void checkNodeStatus(diagnostic_updater::DiagnosticStatusWrapper & stat);
+  void check_node_status(diagnostic_updater::DiagnosticStatusWrapper & stat);
 
   Parameters parameters_;
   Subscribers subscribers_;
@@ -173,5 +172,3 @@ protected:
 };
 
 NS_FOOT
-
-#endif  // TEMPLATE_PKG__MINIMAL_PUBLISHER_NODE_HPP_

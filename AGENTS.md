@@ -31,16 +31,19 @@ code must work on all three.
 
 ## Code style
 
-Follow the [ROS2 code style](https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Code-Style-Language-Versions.html).
+Follow the [ROS2 code style](https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Contributing-to-code/Code-Style-Language-Versions.html).
 The linters enforce it; do not disable or exclude a linter to make a check
-pass.
+pass.  The organization's additions to that style, and its version control
+and release rules, are in the
+[BonROV Development Conventions](https://bonrov.github.io/development-conventions/).
 
 - C++: 2-space indentation, lines of at most 100 characters, opening braces
   of functions, classes and namespaces on their own line.  Run
   `ament_uncrustify --reformat <path>` to fix formatting.  Use the Humble
   version when the distributions disagree, because it is the strictest.
-- Headers use include guards named `<PACKAGE>__<PATH>__<FILE>_HPP_`, not
-  `#pragma once`.
+- Headers start with `#pragma once`.
+- Types are `CamelCase`; functions, methods and variables are `snake_case`;
+  member variables end with an underscore.
 - Include order: the file's own header, C++ standard library, then other
   packages.  Include with the package prefix, e.g.
   `#include "template_pkg/minimal_publisher_node.hpp"`.
@@ -72,6 +75,8 @@ parameter defaults in the header and in `config/*.yaml` in sync.
 
 ## Releases
 
-Both `package.xml` files must carry the same `<version>`.  A release is made
+Each package keeps a `CHANGELOG.rst` in REP-132 format; add user-visible
+changes to its `Forthcoming` section.  Both `package.xml` files must carry
+the same `<version>`.  A release is made
 by pushing a `vX.Y.Z` tag that matches it; the release workflow fails
 otherwise.  Do not create or push tags unless asked.
