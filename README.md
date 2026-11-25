@@ -10,7 +10,7 @@
 This package was designed as a starting point for building a ROS2 C++ package with:
 - automatically configuring cmake file
 - pre-defined structures and conventions for namespacing and code structures
-- adherence to ROS2 design conventions
+- adherence to ROS2 design and code style conventions, enforced by the standard ROS2 linters
 - pre-included doxygen configuration with easy to use and stylish output
 - an example node with YAML-configurable topics and QoS, plus `diagnostic_updater` support
 - a separate interfaces package (`template_pkg_interfaces`) for custom messages
@@ -54,10 +54,27 @@ git push origin v1.2.3
 
 The release workflow fails without publishing anything if the tag and the package versions disagree.
 
-The template ships without tests, so the build checks only verify that the packages compile. Any test you register in a package's `CMakeLists.txt` (see the commented `ament_cmake_gtest` example in `template_pkg/CMakeLists.txt`) is picked up and run automatically. The `ament_lint_common` linters are intentionally not enabled because the template's code style differs from the ament defaults.
+Both packages enable the standard ROS2 linters (`ament_lint_common`), so the build checks fail if the code does not follow the [ROS2 code style](https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Code-Style-Language-Versions.html). Any test you register in a package's `CMakeLists.txt` (see the commented `ament_cmake_gtest` example in `template_pkg/CMakeLists.txt`) is run as well.
+
+### Checking your code locally
+
+Run the same linters and tests the build checks run:
+
+```bash
+colcon test
+colcon test-result --verbose
+```
+
+Fix C++ formatting automatically, and add missing license headers:
+
+```bash
+ament_uncrustify --reformat src/template_pkg
+ament_copyright --add-missing "Your Name" mit src/template_pkg
+```
 
 When you derive a repository from this template:
 
+1. Replace the license header at the top of every source file, and the `@todo` license and maintainer in each `package.xml`, with your own.
 1. Replace `jakebonney10/template_pkg` in the badge URLs at the top of this file with your own `owner/repository`.
 2. To support another distribution, copy one of the distribution workflows and change its `name` and `ROS_DISTRO`. To drop one, delete its workflow file and badge.
 3. Enable GitHub Pages for the repository (**Settings → Pages → Source: GitHub Actions**) so `pages.yml` can deploy.

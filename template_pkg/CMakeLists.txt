@@ -5,20 +5,18 @@ cmake_minimum_required(VERSION 3.16)
 ################################
 
 set(ROS_DEPENDS
-    ament_cmake
-    rclcpp
-    std_msgs
-    diagnostic_updater
-    template_pkg_interfaces
-  )
+  ament_cmake
+  rclcpp
+  std_msgs
+  diagnostic_updater
+  template_pkg_interfaces
+)
 
 set(EXTERNAL_DEPENDS
-
-  )
+)
 
 set(EXTERNAL_DEPENDS_LIB
-
-  )
+)
 
 
 get_filename_component(PACKAGE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
@@ -44,7 +42,7 @@ endif()
 
 foreach(DEPEND ${ROS_DEPENDS} ${EXTERNAL_DEPENDS})
   find_package(${DEPEND} REQUIRED)
-endforeach(DEPEND)
+endforeach()
 
 
 ################
@@ -81,7 +79,7 @@ foreach(DEPEND ${ROS_DEPENDS})
   elseif(TARGET ${DEPEND}::${DEPEND})
     list(APPEND ROS_DEPENDS_LIB ${DEPEND}::${DEPEND})
   endif()
-endforeach(DEPEND)
+endforeach()
 
 set(EXECUTABLES "")  # for installing later
 
@@ -93,8 +91,7 @@ foreach(NODE_FILE ${NODES})
   list(APPEND EXECUTABLES ${NODE_NAME})
   add_executable(${NODE_NAME} ${NODE_FILE} ${HDRS} ${SRCS})
   target_link_libraries(${NODE_NAME} ${ROS_DEPENDS_LIB} ${EXTERNAL_DEPENDS_LIB})
-  target_include_directories(${NODE_NAME} PRIVATE "include/${PROJECT_NAME}/")
-endforeach(NODE_FILE)
+endforeach()
 
 
 message(STATUS "  Installing: ${EXECUTABLES}")
@@ -115,14 +112,17 @@ install(DIRECTORY
 ## testing ##
 #############
 
-# Tests added here are run by `colcon test` and by the GitHub Actions build
-# checks.  Example:
-#
-#   if(BUILD_TESTING)
-#     find_package(ament_cmake_gtest REQUIRED)
-#     ament_add_gtest(${PROJECT_NAME}_test test/my_test.cpp)
-#   endif()
-#
-# and add <test_depend>ament_cmake_gtest</test_depend> to package.xml.
+if(BUILD_TESTING)
+  # Runs the standard ROS2 linters (ament_lint_common) as part of `colcon test`
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+
+  # Add your own tests here, for example:
+  #
+  #   find_package(ament_cmake_gtest REQUIRED)
+  #   ament_add_gtest(${PROJECT_NAME}_test test/my_test.cpp)
+  #
+  # and add <test_depend>ament_cmake_gtest</test_depend> to package.xml.
+endif()
 
 ament_package()

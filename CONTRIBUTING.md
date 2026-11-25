@@ -22,7 +22,13 @@ If you wish to add a new feature, please make a fork from the `devel` branch.
 
 Once your modification is completed, make a pull request back to the `devel` branch.  If it is accepted, your modifications will be available in the `master` branch (default branch) after the next release.
 
-## Additional Guidelines
+## Code Style
 
-Please review and adhere to the style guidelines our [Development Conventions]().   
+All code follows the [ROS2 code style](https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Code-Style-Language-Versions.html) and must pass the standard ROS2 linters (`ament_lint_common`).  The GitHub build checks run them on every pull request.  Before you open one, run them yourself from the root of your workspace:
 
+```bash
+colcon test
+colcon test-result --verbose
+```
+
+`ament_uncrustify --reformat <path>` fixes most C++ formatting problems automatically.
