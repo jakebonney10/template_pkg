@@ -44,8 +44,10 @@ pass.
 - Include order: the file's own header, C++ standard library, then other
   packages.  Include with the package prefix, e.g.
   `#include "template_pkg/minimal_publisher_node.hpp"`.
-- All C++ code lives in a namespace named after the package, written out
-  explicitly (no namespace macros).
+- All C++ code lives in a namespace named after the package, opened and
+  closed with the `NS_HEAD` / `NS_FOOT` macros from
+  `template_pkg/package_defs.hpp`.  Keep each macro definition on a single
+  line inside its `INDENT-OFF` block, or the formatter cannot parse the file.
 - Every C++ and Python source file starts with the license header.  Add
   missing ones with `ament_copyright --add-missing "<owner>" mit <path>`.
 - Python (launch files): flake8 and pep257 clean, with a blank line between

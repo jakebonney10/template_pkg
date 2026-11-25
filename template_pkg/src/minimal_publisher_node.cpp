@@ -26,8 +26,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace template_pkg
-{
+NS_HEAD
 
 // default params are defined in header file
 MinimalPublisherNode::Parameters::Parameters() {}
@@ -186,4 +185,4 @@ MinimalPublisherNode::~MinimalPublisherNode()
   RCLCPP_INFO(this->get_logger(), "MinimalPublisherNode destroyed");
 }
 
-}  // namespace template_pkg
+NS_FOOT

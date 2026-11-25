@@ -32,9 +32,10 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
-// Everything in the package lives in a namespace named after the package.
-namespace template_pkg
-{
+// This is where we include all our namespace stuff for the package
+#include "template_pkg/package_defs.hpp"
+
+NS_HEAD  // macro for consistently defining our namespace for the package
 
 /**
  * @brief a minimal publisher class that extends the rclcpp::Node class to
@@ -171,6 +172,6 @@ protected:
   size_t count_;    ///< Counter for the number of messages published
 };
 
-}  // namespace template_pkg
+NS_FOOT
 
 #endif  // TEMPLATE_PKG__MINIMAL_PUBLISHER_NODE_HPP_
