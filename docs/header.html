@@ -30,6 +30,11 @@ $mathjax
 $darkmode
 $mermaidjs
 <link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
+<link href="$relpath^pagefind/pagefind-component-ui.css" rel="stylesheet" type="text/css" />
+<!-- Must stay a classic script (not type="module"): Pagefind locates its index
+     from this tag, which is what makes search work under a sub-path such as
+     https://<owner>.github.io/<repository>/. -->
+<script defer src="$relpath^pagefind/pagefind-component-ui.js"></script>
 $extrastylesheet
 <script type="text/javascript" src="$relpath^doxygen-awesome-darkmode-toggle.js"></script>
 <script type="text/javascript">
@@ -81,5 +86,20 @@ $extrastylesheet
  </tbody>
 </table>
 </div>
+<!-- Full-text search (Pagefind).  The index in pagefind/ is generated from
+     the built HTML by the Pages workflow.  The wrapper reuses the id of
+     Doxygen's own search box so the theme positions it, and the dark-mode
+     toggle, in the usual place. -->
+<div id="docs-search">
+  <div id="MSearchBox">
+    <pagefind-modal-trigger placeholder="Search docs"></pagefind-modal-trigger>
+  </div>
+</div>
+<pagefind-modal></pagefind-modal>
+<!-- Search result metadata.  Without the title Pagefind uses the first
+     heading on the page.  The empty image fields stop it from picking up the
+     Doxygen footer logo, whose alt text would otherwise match every page. -->
+<span data-pagefind-meta="title" hidden>$title</span>
+<span data-pagefind-meta="image[data-none], image_alt[data-none]" data-none="" hidden></span>
 <!--END TITLEAREA-->
 <!-- end header part -->

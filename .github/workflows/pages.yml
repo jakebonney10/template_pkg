@@ -35,6 +35,14 @@ jobs:
         with:
           working-directory: 'docs/'
           doxyfile-path: 'Doxyfile'
+      # Full-text search: index the generated HTML with Pagefind (configured
+      # in docs/pagefind.yml).  Doxygen runs as root in its container, so take
+      # ownership of the output first.
+      - name: Build search index
+        working-directory: docs
+        run: |
+          sudo chown -R "$(id -u):$(id -g)" _doxygen
+          npx -y pagefind@1.6.0
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:

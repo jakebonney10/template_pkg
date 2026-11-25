@@ -1,0 +1,13 @@
+# Full-text search index for the documentation (https://pagefind.app).
+# Run from this directory after Doxygen:  npx pagefind
+site: _doxygen/html
+# Index the page content only, not the header and navigation around it.
+exclude_selectors:
+  - "#titlearea"
+  - "#docs-search"
+  - "#main-nav"
+  - "#main-nav-mobile"
+  - "#side-nav"
+  - "#page-nav"
+  - "#nav-path"
+  - ".footer"

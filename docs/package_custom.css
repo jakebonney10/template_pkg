@@ -56,3 +56,45 @@ html.dark-mode {
   --searchbar-background: var(--page-background-color);
   */
 }
+
+/*
+ Search (Pagefind).  Map Pagefind's colors onto the theme's variables so the
+ search box and results follow light and dark mode.
+ */
+:root {
+  --pf-text: var(--page-foreground-color);
+  --pf-text-secondary: var(--page-secondary-foreground-color);
+  --pf-text-muted: var(--page-secondary-foreground-color);
+  --pf-background: var(--page-background-color);
+  --pf-border: var(--separator-color);
+  --pf-border-focus: var(--primary-color);
+  --pf-hover: var(--code-background);
+  --pf-mark: var(--primary-color);
+  --pf-skeleton: var(--code-background);
+  --pf-skeleton-shine: var(--separator-color);
+  --pf-outline-focus: var(--primary-color);
+  --pf-font: var(--font-family);
+  --pf-input-height: var(--searchbar-height);
+  --pf-border-radius: var(--border-radius-small);
+}
+
+/* The search box and the dark-mode toggle share one row under the title. */
+#docs-search {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-small);
+  padding: 0 var(--spacing-medium);
+}
+
+#docs-search #MSearchBox {
+  flex: 1;
+  width: auto;
+  height: auto;
+  border: none;
+  background: none;
+  overflow: visible;
+}
+
+#docs-search .pf-trigger-btn {
+  border-radius: var(--searchbar-border-radius);
+}

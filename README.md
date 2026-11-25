@@ -12,6 +12,7 @@ This package was designed as a starting point for building a ROS2 C++ package wi
 - pre-defined structures and conventions for namespacing and code structures
 - adherence to ROS2 design and code style conventions, enforced by the standard ROS2 linters
 - pre-included doxygen configuration with easy to use and stylish output
+- full-text search of the documentation (press Cmd/Ctrl+K on the documentation site)
 - an example node with YAML-configurable topics and QoS, plus `diagnostic_updater` support
 - a separate interfaces package (`template_pkg_interfaces`) for custom messages
 - pre-defined github actions that build and test the packages on every supported ROS2 distribution
@@ -39,7 +40,7 @@ This package was designed as a starting point for building a ROS2 C++ package wi
 | Workflow | Runs on | What it does |
 | --- | --- | --- |
 | `humble.yaml`, `jazzy.yaml`, `lyrical.yaml` | pushes to `master`/`main`/`devel`, every pull request, manual dispatch | Uses [industrial_ci](https://github.com/ros-industrial/industrial_ci) to install dependencies with `rosdep`, build every package in the repository, and run its tests in a clean container for that distribution |
-| `pages.yml` | pushes to `master`/`main`, manual dispatch | Builds the Doxygen documentation, stamps it with the latest release tag, and deploys it to GitHub Pages |
+| `pages.yml` | pushes to `master`/`main`, manual dispatch | Builds the Doxygen documentation, stamps it with the latest release tag, builds the full-text search index with [Pagefind](https://pagefind.app), and deploys it to GitHub Pages |
 | `release.yaml` | pushing a `vX.Y.Z` tag | Checks that the tag matches the `<version>` in every `package.xml`, then creates a GitHub Release with generated release notes |
 
 ### Making a release
